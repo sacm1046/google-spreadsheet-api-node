@@ -2,7 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const { GoogleSpreadsheet } = require('google-spreadsheet');
-const credentials = require('./google-api/credentials');
+const credentials = require('./config/credentials');
+const { type } = require('./config/credentials');
 const { PORT } = process.env;
 
 //middlewares
@@ -24,21 +25,32 @@ const getIndexByLetter = (columnLetter) => {
     return letters.split(",").findIndex((letter) => letter === columnLetter.toUpperCase())
 }
 
+const formatData = (value) => {
+    if (value && value !== "") {
+        if(!isNaN(value)) return Number(value)
+        if(typeof value === 'string') return String(value)
+    }
+    return null
+}
+
 app.get('/rows', async (req, res) => {
     try {
         const { columnLetter } = req.body
         const sheet = await getSheet();
         const rows = await sheet.getRows();
         const index = getIndexByLetter(columnLetter)
-        const result = rows.map(row => {
-            debugger
-            return {
-            value: row._rawData[index],
-            cell: `${columnLetter}1`
-        }})
-        res.status(200).json(result)
+        const maxColumnNumbers = Math.max(...rows.map(row => Number(row._rawData.length)))
+        if(index < maxColumnNumbers) {
+            const result = rows.map(row => {
+                return {
+                value: formatData(row._rawData[index]),
+                cell: `${columnLetter.toUpperCase()}${row._rowNumber}`
+            }})
+            res.status(200).json(result)
+        } else {
+            res.status(400).json(`Columna ${columnLetter.toUpperCase()} no cuenta con título ni datos`)
+        }
     } catch (error) {
-        console.log(error)
         res.status(500).json("error")
     }
 });
@@ -53,7 +65,6 @@ app.post('/cell', async (req, res) => {
         await sheet.saveUpdatedCells()
         res.status(200).json("updated")
     } catch (error) {
-        console.log(error)
         res.status(500).json("error")
     }
 });
