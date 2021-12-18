@@ -1,10 +1,18 @@
 # Documentation
 
-### Google Api Docs
-> [Link](https://theoephraim.github.io/node-google-spreadsheet)
+### Google Spreadsheet
+---
+#### Install
+[Docs](https://theoephraim.github.io/node-google-spreadsheet)
+```bash
+npm i google-spreadsheet
+```
+
+
 
 ### Google Cloud Platform - Google Sheets Api
-> Install
+---
+Install
 1. Acceder a [GCP](https://cloud.google.com/) 
 2. Acceder a la consola
 3. Acceder en el menú lateral a Api y Servicios
