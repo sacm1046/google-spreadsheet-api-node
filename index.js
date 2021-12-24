@@ -13,7 +13,8 @@ app.get('/', (req, res) => res.send("Google Api - NodeJS"));
 
 app.post('/rows', async (req, res) => {
     try {
-        const { columnLetter, spreadsheetId } = req.body
+        const { columnLetter, spreadsheetUrl } = req.body
+        const spreadsheetId = spreadsheetUrl.split("/")[5]
         const sheet = await getSheet(spreadsheetId);
         const rows = await sheet.getRows();
         const index = getIndexByLetter(columnLetter)
@@ -36,7 +37,8 @@ app.post('/rows', async (req, res) => {
 
 app.post('/cell', async (req, res) => {
     try {
-        const { cell, value, spreadsheetId } = req.body
+        const { cell, value, spreadsheetUrl } = req.body
+        const spreadsheetId = spreadsheetUrl.split("/")[5]
         const sheet = await getSheet(spreadsheetId);
         await sheet.loadCells(`A1:${cell}`);
         const cellReference = sheet.getCellByA1(cell);
