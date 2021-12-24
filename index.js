@@ -11,7 +11,7 @@ app.use(cors());
 
 app.get('/', (req, res) => res.send("Google Api - NodeJS"));
 
-app.get('/rows', async (req, res) => {
+app.post('/rows', async (req, res) => {
     try {
         const { columnLetter, spreadsheetId } = req.body
         const sheet = await getSheet(spreadsheetId);
